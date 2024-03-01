@@ -127,18 +127,29 @@ public class SapientialServiceImpl implements ISapientialService
         //查询已经存在的数据
         List<Sapiential> sapientialds=sapientialMapper.findListByIdList(candidateNumber);
 
-
+        String[][] Enumbers=new String[sapientialds.size()][2];
+        for (int i=0;i<sapientialds.size();i++){
+            Enumbers[i][0]=sapientialds.get(i).getExamregistrationnumber();
+            Enumbers[i][1]=sapientialds.get(i).getId()+"";
+        }
         //把存在的和不存在的数据分别保存，进行插入和更新
         for(Sapiential sapiential : sapientialList ){
             //判断是否存在，存在放入sapientiallistupdate，不存在放入sapientiallistinsert
             boolean i=false;//用于判断是否已经放入存在的集合
-            for (Sapiential sapientiald:sapientialds){
-                if(sapientiald.getExamregistrationnumber().equals(sapiential.getExamregistrationnumber())){
-                    sapiential.setId(sapientiald.getId());
+            for (int j=0;j<sapientialds.size();j++){
+                if(Enumbers[j][0].equals(sapiential.getExamregistrationnumber())){
+                    sapiential.setId(Long.parseLong(Enumbers[j][1]));
                     sapientiallistupdate.add(sapiential);
                     i=true;
                 }
             }
+//            for (Sapiential sapientiald:sapientialds){
+//                if(sapientiald.getExamregistrationnumber().equals(sapiential.getExamregistrationnumber())){
+//                    sapiential.setId(sapientiald.getId());
+//                    sapientiallistupdate.add(sapiential);
+//                    i=true;
+//                }
+//            }
             if(i==false){
                 sapientiallistinsert.add(sapiential);
             }
@@ -155,7 +166,19 @@ public class SapientialServiceImpl implements ISapientialService
         }
         if(sapientiallistupdate.size()>0){
             if(updateSupport){
-                sapientialMapper.updateSapientialList(sapientiallistupdate);
+                List<Sapiential> sapientiallistupdates=new ArrayList<>();
+                for(int i=0;i<sapientiallistupdate.size();i++){
+                    if(i%2000==0){
+                        if(sapientiallistupdates.size()>0){
+                            sapientialMapper.updateSapientialList(sapientiallistupdates);
+                            sapientiallistupdates=new ArrayList<>();
+                        }
+                    }else {
+                        sapientiallistupdates.add(sapientiallistupdate.get(i));
+                    }
+                }
+
+               // sapientialMapper.updateSapientialList(sapientiallistupdate);
                 successNum=successNum+sapientiallistupdate.size();
                 for(Sapiential mes : sapientiallistupdate){
                     successMsg.append("<br/>" + mes.getExamregistrationnumber() + "考生考场信息 " + " 更新成功");
