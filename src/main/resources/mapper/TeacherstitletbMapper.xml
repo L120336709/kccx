@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sundata.edu.dao.TeacherstitletbMapper">
+
+    <resultMap type="Teacherstitletb" id="TeacherstitletbResult">
+        <result property="id"    column="id"    />
+        <result property="teacherstitle"    column="teacherstitle"    />
+    </resultMap>
+
+    <sql id="selectTeacherstitletbVo">
+        select id, teacherstitle from teacherstitletb
+    </sql>
+
+    <select id="selectTeacherstitletbList" parameterType="Teacherstitletb" resultMap="TeacherstitletbResult">
+        <include refid="selectTeacherstitletbVo"/>
+        <where>
+            <if test="teacherstitle != null  and teacherstitle != ''"> and teacherstitle = #{teacherstitle}</if>
+        </where>
+    </select>
+
+    <select id="selectTeacherstitletbById" parameterType="Long" resultMap="TeacherstitletbResult">
+        <include refid="selectTeacherstitletbVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTeacherstitletb" parameterType="Teacherstitletb" useGeneratedKeys="true" keyProperty="id">
+        insert into teacherstitletb
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teacherstitle != null">teacherstitle,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teacherstitle != null">#{teacherstitle},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTeacherstitletb" parameterType="Teacherstitletb">
+        update teacherstitletb
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teacherstitle != null">teacherstitle = #{teacherstitle},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeacherstitletbById" parameterType="Long">
+        delete from teacherstitletb where id = #{id}
+    </delete>
+
+    <delete id="deleteTeacherstitletbByIds" parameterType="String">
+        delete from teacherstitletb where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

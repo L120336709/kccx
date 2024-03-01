@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sundata.edu.dao.TeacherrecruitmentMapper">
+    
+    <resultMap type="Teacherrecruitment" id="TeacherrecruitmentResult">
+        <result property="examid"    column="examid"    />
+        <result property="examname"    column="examname"    />
+        <result property="examnumber"    column="examnumber"    />
+        <result property="tsitecode"    column="tsitecode"    />
+        <result property="tsitename"    column="tsitename"    />
+        <result property="tsiteaddress"    column="tsiteaddress"    />
+        <result property="examroomnum"    column="examroomnum"    />
+        <result property="examseatnumber"    column="examseatnumber"    />
+        <result property="exambuilding"    column="exambuilding"    />
+        <result property="examfloor"    column="examfloor"    />
+        <result property="examclassroom"    column="examclassroom"    />
+    </resultMap>
+	
+	<sql id="selectTeacherrecruitmentVo">
+        select examid, examname, examnumber, tsitecode, tsitename, tsiteaddress, examroomnum, examseatnumber, exambuilding, examfloor, examclassroom from teacherrecruitment
+    </sql>
+	
+    <select id="selectTeacherrecruitmentList" parameterType="Teacherrecruitment" resultMap="TeacherrecruitmentResult">
+        <include refid="selectTeacherrecruitmentVo"/>
+        <where>  
+            <if test="examid != null  and examid != '' "> and examid = #{examid}</if>
+             <if test="examname != null  and examname != '' "> and examname = #{examname}</if>
+             <if test="examnumber != null  and examnumber != '' "> and examnumber = #{examnumber}</if>
+             <if test="tsitecode != null  and tsitecode != '' "> and tsitecode = #{tsitecode}</if>
+             <if test="tsitename != null  and tsitename != '' "> and tsitename = #{tsitename}</if>
+             <if test="tsiteaddress != null  and tsiteaddress != '' "> and tsiteaddress = #{tsiteaddress}</if>
+             <if test="examroomnum != null  and examroomnum != '' "> and examroomnum = #{examroomnum}</if>
+             <if test="examseatnumber != null  and examseatnumber != '' "> and examseatnumber = #{examseatnumber}</if>
+             <if test="exambuilding != null  and exambuilding != '' "> and exambuilding = #{exambuilding}</if>
+             <if test="examfloor != null  and examfloor != '' "> and examfloor = #{examfloor}</if>
+             <if test="examclassroom != null  and examclassroom != '' "> and examclassroom = #{examclassroom}</if>
+         </where>
+    </select>
+    
+    <select id="selectTeacherrecruitmentById" parameterType="String" resultMap="TeacherrecruitmentResult">
+        <include refid="selectTeacherrecruitmentVo"/>
+        where examid = #{examid}
+    </select>
+        
+    <insert id="insertTeacherrecruitment" parameterType="Teacherrecruitment">
+        insert into teacherrecruitment
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="examid != null  and examid != ''  ">examid,</if>
+			<if test="examname != null  and examname != ''  ">examname,</if>
+			<if test="examnumber != null  and examnumber != ''  ">examnumber,</if>
+			<if test="tsitecode != null  and tsitecode != ''  ">tsitecode,</if>
+			<if test="tsitename != null  and tsitename != ''  ">tsitename,</if>
+			<if test="tsiteaddress != null  and tsiteaddress != ''  ">tsiteaddress,</if>
+			<if test="examroomnum != null  and examroomnum != ''  ">examroomnum,</if>
+			<if test="examseatnumber != null  and examseatnumber != ''  ">examseatnumber,</if>
+			<if test="exambuilding != null  and exambuilding != ''  ">exambuilding,</if>
+			<if test="examfloor != null  and examfloor != ''  ">examfloor,</if>
+			<if test="examclassroom != null  and examclassroom != ''  ">examclassroom,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="examid != null  and examid != ''  ">#{examid},</if>
+			<if test="examname != null  and examname != ''  ">#{examname},</if>
+			<if test="examnumber != null  and examnumber != ''  ">#{examnumber},</if>
+			<if test="tsitecode != null  and tsitecode != ''  ">#{tsitecode},</if>
+			<if test="tsitename != null  and tsitename != ''  ">#{tsitename},</if>
+			<if test="tsiteaddress != null  and tsiteaddress != ''  ">#{tsiteaddress},</if>
+			<if test="examroomnum != null  and examroomnum != ''  ">#{examroomnum},</if>
+			<if test="examseatnumber != null  and examseatnumber != ''  ">#{examseatnumber},</if>
+			<if test="exambuilding != null  and exambuilding != ''  ">#{exambuilding},</if>
+			<if test="examfloor != null  and examfloor != ''  ">#{examfloor},</if>
+			<if test="examclassroom != null  and examclassroom != ''  ">#{examclassroom},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateTeacherrecruitment" parameterType="Teacherrecruitment">
+        update teacherrecruitment
+        <trim prefix="SET" suffixOverrides=",">
+            examname = #{examname},
+            examnumber = #{examnumber},
+            tsitecode = #{tsitecode},
+            tsitename = #{tsitename},
+            tsiteaddress = #{tsiteaddress},
+            examroomnum = #{examroomnum},
+            examseatnumber = #{examseatnumber},
+            exambuilding = #{exambuilding},
+            examfloor = #{examfloor},
+            examclassroom = #{examclassroom},
+        </trim>
+        where examid = #{examid}
+    </update>
+
+	<delete id="deleteTeacherrecruitmentById" parameterType="String">
+        delete from teacherrecruitment where examid = #{examid}
+    </delete>
+	
+    <delete id="deleteTeacherrecruitmentByIds" parameterType="String">
+        delete from teacherrecruitment where examid in
+        <foreach item="examid" collection="array" open="(" separator="," close=")">
+            #{examid}
+        </foreach>
+    </delete>
+
+    <update id="turntablesapiential" parameterType="Long">
+        truncate table teacherrecruitment
+    </update>
+
+    <!--批量查找数据 -->
+    <select id="findUserListByExamnumberList" parameterType="java.util.ArrayList" resultMap="TeacherrecruitmentResult">
+        select * from teacherrecruitment
+        <where>
+            teacherrecruitment.examnumber in (
+            <foreach collection="list"  item="examnumber" index="index" separator=",">
+                #{examnumber}
+            </foreach>
+            )
+        </where>
+    </select>
+    <!--批量插入数据 -->
+    <insert id="insertTeacherRecruitmentList"  >
+        insert into teacherrecruitment (examid, examname, examnumber, tsitecode, tsitename, tsiteaddress, examroomnum, examseatnumber, exambuilding, examfloor, examclassroom)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.examid},#{item.examname},#{item.examnumber},#{item.tsitecode},#{item.tsitename},#{item.tsiteaddress},#{item.examroomnum},#{item.examseatnumber},#{item.exambuilding},#{item.examfloor},#{item.examclassroom})
+        </foreach>
+    </insert>
+
+    <!--批量更新数据 -->
+    <update id="updateTeacherRecruitmentList" parameterType="java.util.List">
+        update teacherrecruitment set
+        examname =
+        <foreach collection="list" item="item" index="index" separator=" " open="case examid" close="end">
+            when #{item.examid,jdbcType=DECIMAL} then #{item.examname,jdbcType=VARCHAR}
+        </foreach>
+        ,examnumber =
+        <foreach collection="list" item="item" index="index" separator=" " open="case examid" close="end">
+            when #{item.examid,jdbcType=DECIMAL} then #{item.examnumber,jdbcType=VARCHAR}
+        </foreach>
+        ,tsitecode =
+        <foreach collection="list" item="item" index="index" separator=" " open="case examid" close="end">
+            when #{item.examid,jdbcType=DECIMAL} then #{item.tsitecode,jdbcType=VARCHAR}
+        </foreach>
+        ,tsitename =
+        <foreach collection="list" item="item" index="index" separator=" " open="case examid" close="end">
+            when #{item.examid,jdbcType=DECIMAL} then #{item.tsitename,jdbcType=VARCHAR}
+        </foreach>
+        ,tsiteaddress =
+        <foreach collection="list" item="item" index="index" separator=" " open="case examid" close="end">
+            when #{item.examid,jdbcType=DECIMAL} then #{item.tsiteaddress,jdbcType=VARCHAR}
+        </foreach>
+        ,examroomnum =
+        <foreach collection="list" item="item" index="index" separator=" " open="case examid" close="end">
+            when #{item.examid,jdbcType=DECIMAL} then #{item.examroomnum,jdbcType=VARCHAR}
+        </foreach>
+        ,examseatnumber =
+        <foreach collection="list" item="item" index="index" separator=" " open="case examid" close="end">
+            when #{item.examid,jdbcType=DECIMAL} then #{item.examseatnumber,jdbcType=VARCHAR}
+        </foreach>
+        ,exambuilding =
+        <foreach collection="list" item="item" index="index" separator=" " open="case examid" close="end">
+            when #{item.examid,jdbcType=DECIMAL} then #{item.exambuilding,jdbcType=VARCHAR}
+        </foreach>
+        ,examfloor =
+        <foreach collection="list" item="item" index="index" separator=" " open="case examid" close="end">
+            when #{item.examid,jdbcType=DECIMAL} then #{item.examfloor,jdbcType=VARCHAR}
+        </foreach>
+        ,examclassroom =
+        <foreach collection="list" item="item" index="index" separator=" " open="case examid" close="end">
+            when #{item.examid,jdbcType=DECIMAL} then #{item.examclassroom,jdbcType=VARCHAR}
+        </foreach>
+
+        where examid in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.examid,jdbcType=DECIMAL}
+        </foreach>
+    </update>
+
+
+</mapper>

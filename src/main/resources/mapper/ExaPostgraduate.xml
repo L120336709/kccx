@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sundata.edu.dao.ExaPostgraduateDao">
+    
+    <resultMap type="com.sundata.edu.domain.ExaPostgraduate" id="BaseResultMap">
+        <result property="id" column="id" />
+        <result property="stuname" column="stuname" />
+        <result property="candidateNumber" column="candidate_number" />
+        <result property="applySchool" column="apply_school" />
+        <result property="exaRoomNum" column="exa_room_num" />
+        <result property="seatNumber" column="seat_number" />
+        <result property="building" column="building" />
+        <result property="classroom" column="classroom" />
+        <result property="floor" column="floor" />
+        <result property="exaSite" column="exa_site" />
+    </resultMap>
+
+    <sql id="selectExaPostgraduateVo">
+        select id,stuname,candidate_number,apply_school,exa_room_num,seat_number,building,classroom,floor,exa_site  from exa_postgraduate
+    </sql>
+
+    <select id="selectExaPostgraduateList" parameterType="ExaPostgraduate" resultMap="BaseResultMap">
+        <include refid="selectExaPostgraduateVo"/>
+        <where>
+            <if test="stuname != null  and stuname != ''"> and stuname like concat('%', #{stuname}, '%')</if>
+            <if test="candidateNumber != null  and candidateNumber != ''"> and candidate_number = #{candidateNumber}</if>
+            <if test="applySchool != null  and applySchool != ''"> and apply_school like concat('%', #{applySchool}, '%')</if>
+            <if test="exaRoomNum != null  and exaRoomNum != ''"> and exa_room_num = #{exaRoomNum}</if>
+            <if test="seatNumber != null  and seatNumber != ''"> and seat_number = #{seatNumber}</if>
+            <if test="building != null  and building != ''"> and building = #{building}</if>
+            <if test="classroom != null  and classroom != ''"> and classroom = #{classroom}</if>
+            <if test="floor != null  and floor != ''"> and floor = #{floor}</if>
+            <if test="exaSite != null  and exaSite != ''"> and exa_site = #{exaSite}</if>
+        </where>
+    </select>
+
+    <select id="selectExaPostgraduateExi" parameterType="ExaPostgraduate" resultMap="BaseResultMap">
+        <include refid="selectExaPostgraduateVo"/>
+        <where>
+            <if test="stuname != null  and stuname != ''"> and stuname = #{stuname}</if>
+            <if test="candidateNumber != null  and candidateNumber != ''"> and candidate_number = #{candidateNumber}</if>
+        </where>
+    </select>
+
+    <insert id="insertExaPostgraduate" parameterType="ExaPostgraduate" >
+        insert into exa_postgraduate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="stuname != null">stuname,</if>
+            <if test="candidateNumber != null">candidate_number,</if>
+            <if test="applySchool != null">apply_school,</if>
+            <if test="exaRoomNum != null">exa_room_num,</if>
+            <if test="seatNumber != null">seat_number,</if>
+            <if test="building != null">building,</if>
+            <if test="classroom != null">classroom,</if>
+            <if test="floor != null">floor,</if>
+            <if test="exaSite != null">exa_site</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="stuname != null">#{stuname},</if>
+            <if test="candidateNumber != null">#{candidateNumber},</if>
+            <if test="applySchool != null">#{applySchool},</if>
+            <if test="exaRoomNum != null">#{exaRoomNum},</if>
+            <if test="seatNumber != null">#{seatNumber},</if>
+            <if test="building != null">#{building},</if>
+            <if test="classroom != null">#{classroom},</if>
+            <if test="floor != null">#{floor},</if>
+            <if test="exaSite != null">#{exaSite}</if>
+        </trim>
+    </insert>
+
+    <update id="updateExaPostgraduate" parameterType="ExaPostgraduate">
+        update  exa_postgraduate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="stuname != null">stuname=#{stuname},</if>
+            <if test="candidateNumber != null">candidate_number=#{candidateNumber},</if>
+            <if test="applySchool != null">apply_school=#{applySchool},</if>
+            <if test="exaRoomNum != null">exa_room_num=#{exaRoomNum},</if>
+            <if test="seatNumber != null">seat_number=#{seatNumber},</if>
+            <if test="building != null">building=#{building},</if>
+            <if test="classroom != null">classroom=#{classroom},</if>
+            <if test="floor != null">floor=#{floor},</if>
+            <if test="exaSite != null">exa_site=#{exaSite},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+
+    <!--批量查找数据 -->
+    <select id="findUserListByIdList" parameterType="java.util.ArrayList" resultMap="BaseResultMap">
+        select * from exa_postgraduate
+        <where>
+            exa_postgraduate.candidate_number in (
+            <foreach collection="list"  item="candidateNumber" index="index" separator=",">
+                #{candidateNumber}
+            </foreach>
+            )
+        </where>
+    </select>
+    <!--批量插入数据 -->
+    <insert id="insertExaPostgraduateList"  >
+        insert into exa_postgraduate (id,stuname,candidate_number,apply_school,exa_room_num,seat_number,building,classroom,floor,exa_site)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.id},#{item.stuname},#{item.candidateNumber},#{item.applySchool},#{item.exaRoomNum},#{item.seatNumber},#{item.building},#{item.classroom},#{item.floor},#{item.exaSite})
+        </foreach>
+    </insert>
+
+    <!--批量更新数据 -->
+    <update id="updateExaPostgraduateList" parameterType="java.util.List">
+        update exa_postgraduate set
+        stuname =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.stuname,jdbcType=VARCHAR}
+        </foreach>
+        ,apply_school =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.applySchool,jdbcType=VARCHAR}
+        </foreach>
+        ,exa_room_num =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.exaRoomNum,jdbcType=VARCHAR}
+        </foreach>
+        ,seat_number =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.seatNumber,jdbcType=VARCHAR}
+        </foreach>
+        ,building =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.building,jdbcType=VARCHAR}
+        </foreach>
+        ,classroom =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.classroom,jdbcType=VARCHAR}
+        </foreach>
+        ,floor =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.floor,jdbcType=VARCHAR}
+        </foreach>
+        ,exa_site =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.exaSite,jdbcType=VARCHAR}
+        </foreach>
+
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=DECIMAL}
+        </foreach>
+    </update>
+
+    <!-- 批量删除-->
+    <delete id="deleteExaPostgraduateByIds" parameterType="java.util.List">
+        delete from exa_postgraduate where id in
+        <foreach collection="list" item="id"  open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="turntablesapiential" parameterType="Long">
+        truncate table exa_postgraduate
+    </update>
+</mapper>

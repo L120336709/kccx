@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('新增')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-teacherrecruitment-add">
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">姓名：</label>
+				<div class="col-sm-8">
+					<input id="examname" name="examname" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">准考证号：</label>
+				<div class="col-sm-8">
+					<input id="examnumber" name="examnumber" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">考点代码：</label>
+				<div class="col-sm-8">
+					<input id="tsitecode" name="tsitecode" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">考点名称：</label>
+				<div class="col-sm-8">
+					<input id="tsitename" name="tsitename" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">考点地址：</label>
+				<div class="col-sm-8">
+					<input id="tsiteaddress" name="tsiteaddress" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">考场号：</label>
+				<div class="col-sm-8">
+					<input id="examroomnum" name="examroomnum" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">座位号：</label>
+				<div class="col-sm-8">
+					<input id="examseatnumber" name="examseatnumber" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">楼栋：</label>
+				<div class="col-sm-8">
+					<input id="exambuilding" name="exambuilding" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">楼层：</label>
+				<div class="col-sm-8">
+					<input id="examfloor" name="examfloor" class="form-control" type="text">
+				</div>
+			</div>
+			<div class="form-group">	
+				<label class="col-sm-3 control-label">教室号：</label>
+				<div class="col-sm-8">
+					<input id="examclassroom" name="examclassroom" class="form-control" type="text">
+				</div>
+			</div>
+		</form>
+	</div>
+    <div th:include="include::footer"></div>
+    <script type="text/javascript">
+		var prefix = ctx + "teacherrecruitment"
+		$("#form-teacherrecruitment-add").validate({
+			rules:{
+				xxxx:{
+					required:true,
+				},
+			},
+			focusCleanup: true
+		});
+		
+		function submitHandler() {
+	        if ($.validate.form()) {
+	            $.operate.save(prefix + "/add", $('#form-teacherrecruitment-add').serialize());
+	        }
+	    }
+	</script>
+</body>
+</html>

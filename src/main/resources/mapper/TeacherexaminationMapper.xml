@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sundata.edu.dao.TeacherexaminationMapper">
+
+    <resultMap type="Teacherexamination" id="TeacherexaminationResult">
+        <result property="id"    column="id"    />
+        <result property="examineename"    column="examineename"    />
+        <result property="examregistrationnumber"    column="examregistrationnumber"    />
+        <result property="theexaminationsitename"    column="theexaminationsitename"    />
+        <result property="theexaminationsiteaddress"    column="theexaminationsiteaddress"    />
+        <result property="thefirstsession"    column="thefirstsession"    />
+        <result property="classroomnumberone"    column="classroomnumberone"    />
+        <result property="thefirstgame"    column="thefirstgame"    />
+        <result property="classroomnumbertwo"    column="classroomnumbertwo"    />
+        <result property="thethirdsession"    column="thethirdsession"    />
+        <result property="classroomnumberthree"    column="classroomnumberthree"    />
+    </resultMap>
+
+    <sql id="selectTeacherexaminationVo">
+        select id, examineename, examregistrationnumber, theexaminationsitename, theexaminationsiteaddress, thefirstsession, classroomnumberone, thefirstgame, classroomnumbertwo, thethirdsession, classroomnumberthree from teacherexamination
+    </sql>
+
+    <select id="selectTeacherexaminationList" parameterType="Teacherexamination" resultMap="TeacherexaminationResult">
+        <include refid="selectTeacherexaminationVo"/>
+        <where>
+            <if test="examineename != null  and examineename != ''"> and examineename like concat('%', #{examineename}, '%')</if>
+            <if test="examregistrationnumber != null  and examregistrationnumber != ''"> and examregistrationnumber = #{examregistrationnumber}</if>
+            <if test="theexaminationsitename != null  and theexaminationsitename != ''"> and theexaminationsitename like concat('%', #{theexaminationsitename}, '%')</if>
+            <if test="theexaminationsiteaddress != null  and theexaminationsiteaddress != ''"> and theexaminationsiteaddress = #{theexaminationsiteaddress}</if>
+            <if test="thefirstsession != null  and thefirstsession != ''"> and thefirstsession = #{thefirstsession}</if>
+            <if test="classroomnumberone != null  and classroomnumberone != ''"> and classroomnumberone = #{classroomnumberone}</if>
+            <if test="thefirstgame != null  and thefirstgame != ''"> and thefirstgame = #{thefirstgame}</if>
+            <if test="classroomnumbertwo != null  and classroomnumbertwo != ''"> and classroomnumbertwo = #{classroomnumbertwo}</if>
+            <if test="thethirdsession != null  and thethirdsession != ''"> and thethirdsession = #{thethirdsession}</if>
+            <if test="classroomnumberthree != null  and classroomnumberthree != ''"> and classroomnumberthree = #{classroomnumberthree}</if>
+        </where>
+    </select>
+
+    <select id="selectTeacherexaminationById" parameterType="Long" resultMap="TeacherexaminationResult">
+        <include refid="selectTeacherexaminationVo"/>
+        where id = #{id}
+    </select>
+
+
+    <!--批量查找数据 -->
+    <select id="findListByIdList" parameterType="java.util.ArrayList" resultMap="TeacherexaminationResult">
+        select * from teacherexamination
+        <where>
+            examregistrationnumber in (
+            <foreach collection="list"  item="examregistrationnumber" index="index" separator=",">
+                #{examregistrationnumber}
+            </foreach>
+            )
+        </where>
+    </select>
+    <!--批量插入数据 -->
+    <insert id="insertTeacherexaminationList"  >
+        insert into teacherexamination (
+        examineename, examregistrationnumber, theexaminationsitename,
+        theexaminationsiteaddress, thefirstsession, classroomnumberone, thefirstgame,
+        classroomnumbertwo, thethirdsession, classroomnumberthree )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.examineename}, #{item.examregistrationnumber}, #{item.theexaminationsitename},
+             #{item.theexaminationsiteaddress}, #{item.thefirstsession}, #{item.classroomnumberone}, #{item.thefirstgame},
+             #{item.classroomnumbertwo}, #{item.thethirdsession}, #{item.classroomnumberthree}
+            )
+        </foreach>
+    </insert>
+    <!--批量更新数据 -->
+    <update id="updateTeacherexaminationList" parameterType="java.util.List">
+        update teacherexamination set
+
+
+        examineename =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.examineename,jdbcType=VARCHAR}
+        </foreach>
+        ,examregistrationnumber =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.examregistrationnumber,jdbcType=VARCHAR}
+        </foreach>
+        ,theexaminationsitename =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.theexaminationsitename,jdbcType=VARCHAR}
+        </foreach>
+        ,theexaminationsiteaddress =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.theexaminationsiteaddress,jdbcType=VARCHAR}
+        </foreach>
+
+
+
+        ,thefirstsession =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.thefirstsession,jdbcType=VARCHAR}
+        </foreach>
+        ,classroomnumberone =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.classroomnumberone,jdbcType=VARCHAR}
+        </foreach>
+        ,thefirstgame =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.thefirstgame,jdbcType=VARCHAR}
+        </foreach>
+
+        ,classroomnumbertwo =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.classroomnumbertwo,jdbcType=VARCHAR}
+        </foreach>
+        ,thethirdsession =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.thethirdsession,jdbcType=VARCHAR}
+        </foreach>
+        ,classroomnumberthree =
+        <foreach collection="list" item="item" index="index" separator=" " open="case id" close="end">
+            when #{item.id,jdbcType=DECIMAL} then #{item.classroomnumberthree,jdbcType=VARCHAR}
+        </foreach>
+
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=DECIMAL}
+        </foreach>
+    </update>
+
+    <update id="turntablesapiential" parameterType="Long">
+        truncate table teacherexamination
+    </update>
+
+
+    <insert id="insertTeacherexamination" parameterType="Teacherexamination" useGeneratedKeys="true" keyProperty="id">
+        insert into teacherexamination
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="examineename != null">examineename,</if>
+            <if test="examregistrationnumber != null">examregistrationnumber,</if>
+            <if test="theexaminationsitename != null">theexaminationsitename,</if>
+            <if test="theexaminationsiteaddress != null">theexaminationsiteaddress,</if>
+            <if test="thefirstsession != null">thefirstsession,</if>
+            <if test="classroomnumberone != null">classroomnumberone,</if>
+            <if test="thefirstgame != null">thefirstgame,</if>
+            <if test="classroomnumbertwo != null">classroomnumbertwo,</if>
+            <if test="thethirdsession != null">thethirdsession,</if>
+            <if test="classroomnumberthree != null">classroomnumberthree,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="examineename != null">#{examineename},</if>
+            <if test="examregistrationnumber != null">#{examregistrationnumber},</if>
+            <if test="theexaminationsitename != null">#{theexaminationsitename},</if>
+            <if test="theexaminationsiteaddress != null">#{theexaminationsiteaddress},</if>
+            <if test="thefirstsession != null">#{thefirstsession},</if>
+            <if test="classroomnumberone != null">#{classroomnumberone},</if>
+            <if test="thefirstgame != null">#{thefirstgame},</if>
+            <if test="classroomnumbertwo != null">#{classroomnumbertwo},</if>
+            <if test="thethirdsession != null">#{thethirdsession},</if>
+            <if test="classroomnumberthree != null">#{classroomnumberthree},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTeacherexamination" parameterType="Teacherexamination">
+        update teacherexamination
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="examineename != null">examineename = #{examineename},</if>
+            <if test="examregistrationnumber != null">examregistrationnumber = #{examregistrationnumber},</if>
+            <if test="theexaminationsitename != null">theexaminationsitename = #{theexaminationsitename},</if>
+            <if test="theexaminationsiteaddress != null">theexaminationsiteaddress = #{theexaminationsiteaddress},</if>
+            <if test="thefirstsession != null">thefirstsession = #{thefirstsession},</if>
+            <if test="classroomnumberone != null">classroomnumberone = #{classroomnumberone},</if>
+            <if test="thefirstgame != null">thefirstgame = #{thefirstgame},</if>
+            <if test="classroomnumbertwo != null">classroomnumbertwo = #{classroomnumbertwo},</if>
+            <if test="thethirdsession != null">thethirdsession = #{thethirdsession},</if>
+            <if test="classroomnumberthree != null">classroomnumberthree = #{classroomnumberthree},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTeacherexaminationById" parameterType="Long">
+        delete from teacherexamination where id = #{id}
+    </delete>
+
+    <delete id="deleteTeacherexaminationByIds" parameterType="String">
+        delete from teacherexamination where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

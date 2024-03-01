@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('列表')" />
+</head>
+<body class="gray-bg">
+    
+     <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="formId">
+					<div class="select-list">
+						<ul>
+							<li>
+								姓名：<input type="text" name="examname"/>
+							</li>
+
+							<li>
+								准考证号：<input type="text" name="examnumber"/>
+							</li>
+<!--							<li>-->
+<!--								考点名称：<input type="text" name="tsitename"/>-->
+<!--							</li>-->
+
+<!--							<li>-->
+<!--								考点地址：<input type="text" name="tsiteaddress"/>-->
+<!--							</li>-->
+
+
+
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+	        <div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-success" onclick="$.operate.add()" >
+					<i class="fa fa-plus"></i> 添加
+				</a>
+				<a class="btn btn-primary btn-edit disabled" onclick="$.operate.edit()" >
+					<i class="fa fa-edit"></i> 修改
+				</a>
+				<a class="btn btn-danger btn-del btn-del disabled" onclick="$.operate.removeAll()" >
+					<i class="fa fa-remove"></i> 删除
+				</a>
+				<a class="btn btn-danger" onclick="truncateAll()">
+					<i class="fa fa-remove"></i> 清空
+				</a>
+
+				<a class="btn btn-info" onclick="$.table.importExcel()" >
+					<i class="fa fa-upload"></i> 导入
+				</a>
+				<a class="btn btn-warning" onclick="$.table.exportExcel()" >
+					<i class="fa fa-download"></i> 导出
+				</a>
+			</div>
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table" data-mobile-responsive="true"></table>
+			</div>
+		</div>
+	</div>
+	 <div>
+		 <form id="importForm" name="importFile" class="form-horizontal" method="post"
+			   enctype="multipart/form-data" hidden="hidden">
+			 <div class="col-xs-offset-1">
+				 <input id="file" name="file" class="file-loading" type="file" multiple accept=".xls,.xlsx">
+				 <div class="mt10 pt5">
+					 <input type="checkbox" id="updateSupport" name="updateSupport" title="如果登录账户已经存在，更新这条数据。"> 是否更新已经存在的用户数据
+					 &nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+				 </div>
+				 <font color="red" class="pull-left mt10">
+					 提示：仅允许导入“xls”或“xlsx”格式文件！
+				 </font>
+			 </div>
+		 </form>
+	 </div>
+    <div th:include="include :: footer"></div>
+    <script th:inline="javascript">
+        // var editFlag = [[${@permission.hasPermi('rfsj:teacherrecruitment:edit')}]];
+        // var removeFlag = [[${@permission.hasPermi('rfsj:teacherrecruitment:remove')}]];
+        var prefix = ctx + "teacherrecruitment";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+				exportUrl: prefix + "/export",
+				importUrl: prefix + "/importData",
+				importTemplateUrl: prefix + "/importTemplate",
+                modalName: "",
+		        showExport: true,
+                columns: [{
+		            checkbox: true
+		        },
+				{
+					field : 'examid', 
+					title : 'id',
+					visible: false
+				},
+				{
+					field : 'examname', 
+					title : '姓名',
+					sortable: true
+				},
+				{
+					field : 'examnumber', 
+					title : '准考证号',
+					sortable: true
+				},
+				{
+					field : 'tsitecode', 
+					title : '考点代码',
+					sortable: true
+				},
+				{
+					field : 'tsitename', 
+					title : '考点名称',
+					sortable: true
+				},
+				{
+					field : 'tsiteaddress', 
+					title : '考点地址',
+					sortable: true
+				},
+				{
+					field : 'examroomnum', 
+					title : '考场号',
+					sortable: true
+				},
+				{
+					field : 'examseatnumber', 
+					title : '座位号',
+					sortable: true
+				},
+				{
+					field : 'exambuilding', 
+					title : '楼栋',
+					sortable: true
+				},
+				{
+					field : 'examfloor', 
+					title : '楼层',
+					sortable: true
+				},
+				{
+					field : 'examclassroom', 
+					title : '教室号',
+					sortable: true
+				},
+		        {
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		            	var actions = [];
+		            	actions.push('<a class="btn btn-success btn-xs " href="#" onclick="$.operate.edit(\'' + row.examid + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs  " href="#" onclick="$.operate.remove(\'' + row.examid + '\')"><i class="fa fa-remove"></i>删除</a>');
+						return actions.join('');
+		            }
+		        }]
+            };
+            $.table.init(options);
+        });
+
+
+		function truncateAll() {
+			layer.confirm("确认清空所有教师招聘考试考场数据吗？", {
+				btn: ['确定', '取消']
+			}, function () {
+				$.ajax({
+					cache: true,
+					type: 'POST',
+					url: prefix + "/turntable",
+					success: function (result) {
+						layer.msg("清空教师招聘考试考场数据成功！", {icon: 1, time: 2000}, function () {
+							window.location.reload();
+						})
+					},
+					error: function () {
+						layer.msg("清空教师招聘考试考场数据失败！请刷新后重试或者联系管理员处理。", {icon: 2, time: 2000});
+					}
+				});
+			});
+
+
+		}
+    </script>
+</body>
+</html>

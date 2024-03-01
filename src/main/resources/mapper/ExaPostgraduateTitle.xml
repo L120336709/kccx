@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sundata.edu.dao.ExaPostgraduteMapper">
+    
+    <resultMap type="ExaPostgraduateTitle" id="BaseResultMap">
+        <result property="id" column="id" />
+        <result property="title" column="title" />
+    </resultMap>
+
+
+
+    <sql id="selectExaPostgraduateTitleVo">
+        select id, title from exa_postgraduate_title
+    </sql>
+
+    <select id="selectExaPostgraduateTitleList" parameterType="ExaPostgraduateTitle" resultMap="BaseResultMap">
+        <include refid="selectExaPostgraduateTitleVo"/>
+        <where>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+        </where>
+    </select>
+
+
+
+    <update id="updateExaPostgraduateTitle" parameterType="ExaPostgraduateTitle">
+        update exa_postgraduate_title
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null">title = #{title},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+
+</mapper>

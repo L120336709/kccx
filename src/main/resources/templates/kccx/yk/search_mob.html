@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+    <script >
+        (function (doc,win){
+            var docEl = document.documentElement,
+                resizeEvt = 'orientationchange' in window?'orientationchange':'resize',
+                reclc = function (){
+                    var clientWidth = docEl.clientWidth;
+                    if (!clientWidth)return;
+                    if (clientWidth>=750){
+                        docEl.style.fontSize = '100px';
+                    }else {
+                        docEl.style.fontSize = 100 * (clientWidth / 750)+'px';
+                    }
+                };
+            if (!doc.addEventListener)return;
+            win.addEventListener(resizeEvt,reclc,false);
+            doc.addEventListener('DOMContentLoaded',reclc,false);
+        })(document,window);
+    </script>
+</head>
+<body>
+<div class="header" id="header">
+    <img id="logo" src="/kaochangchaxun/images/logo1.png" >
+</div>
+<div class="title" id="title"></div>
+
+<div  style="width: 10%;display:none;" class="logoImg amplifyImg"  id="amplifyImg"><!--注意：此处的amlifyImg不可少-->
+    <img style="width: 100%" th:src="@{/img/kccx/ykcx2023.png}" alt="" id="schoolimg" />
+</div>
+<div class="over"></div><!--背景层-->
+
+<form id="formid" onsubmit="return false" >
+        <div class="search">
+            <div class="search-input">
+                <lable>考生姓名</lable><input type="text" id="stuname" placeholder="请输入你的姓名" class="info-input">
+            </div>
+            <div class="search-input">
+                <lable>考生编号</lable><input id="candidateNumber" placeholder="请输入你的考生编号" type="text" class="info-input">
+            </div>
+            <div class="search-btn">
+                <button class="btn" id="btnSubmit" >查询</button>
+                <button class="btn"  onclick="form_set()">重置</button>
+            </div>
+        </div>
+        <div class="content"  id="showinfo">
+            <div align="center">
+                <table class="tb">
+                    <tr class="row">
+                        <td class="option">姓名</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">考生编号</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">报考单位</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">考场号</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">座位号</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">楼栋</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">教室</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">楼层</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option bnone">考点</td>
+<!--                        <td class="option bnone">考点(点击显示考点平面图)</td>-->
+                        <td class="option-con "></td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </form>
+
+
+
+<script src="/js/jquery.min.js?v=20221103"></script>
+<!--<script th:src="@{/js/resizewindow.js}"></script>-->
+<script>
+    $(document).ready(function() {
+        $("#btnSubmit").click(function() {
+            if (Check()) {
+                get_info();
+            }
+        });
+    });
+    //标题
+    $(function(){
+        $.ajax({
+            url:'/exaPostgraduateTitle/table/selectTitle',
+            data:{'id':1},
+            dataType:'json',
+            type:'post',
+            success:function(data){
+                if (data.code==200) {
+                    var titlelist= {};
+                    titlelist = data.data; //数组
+                    if( titlelist.length!=0){
+                        bon= '<div class="title">' + titlelist.title + '</div>'
+                        $("#title").html(bon);
+                        return false;
+                    }else {
+                        alert("系统有误请稍后重试....");
+                        return false;
+                    }
+                } else {
+                    alert("系统有误请稍后重试....");
+                    return false;
+                }
+            },
+        });
+    })
+    // $(function(){
+    //     if(_isMobile){
+    //        window.location.href="/crgk/searchmob";
+    //     }else{
+    //
+    //     }
+    //
+    // })
+    // 查询信息
+    function get_info(){
+        var stuname = $("#stuname").val();
+        var candidateNumber = $("#candidateNumber").val();
+        $.ajax({
+            url:'/exaPostgraduate/table/selectEndurance',
+            data:{'stuname':stuname, 'candidateNumber':candidateNumber},
+            dataType:'json',
+            type:'post',
+            success:function(data){
+                if (data.code==200) {
+                    var byts= {};
+                    byts = data.data; //数组
+                    if(byts.length!=0){
+
+                        var con = '<table class="tb">'
+                        con += '<tr class="row"><td class="option">姓名</td>'
+                        con += '<td class="option-con">' + byts.stuname + '</td></tr>'
+                        con += '<tr class="row"><td class="option">考生编号</td>'
+                        con += '<td class="option-con">' + byts.candidateNumber + '</td></tr>'
+                        con += '<tr class="row"><td class="option">报考单位</td>'
+                        con += '<td class="option-con">' + byts.applySchool + '</td></tr>'
+                        con += '<tr class="row"><td class="option">考场号</td>'
+                        con += '<td class="option-con">' + byts.exaRoomNum + '</td></tr>'
+                        con += '<tr class="row"><td class="option">座位号</td>'
+                        con += '<td class="option-con">' + byts.seatNumber + '</td></tr>'
+                        con += '<tr class="row"><td class="option">楼栋</td>'
+                        con += '<td class="option-con">' + byts.building + '</td></tr>'
+                        con += '<tr class="row"><td class="option">教室</td>'
+                        con += '<td class="option-con">' + byts.classroom + '</td></tr>'
+                        con += '<tr class="row"><td class="option">楼层</td>'
+                        con += '<td class="option-con">' + byts.floor + '</td></tr>'
+                        con += '<tr class="row"><td class="option bnone">考点</td>'
+                        con += '<td class="option-con bnone"  >' + byts.exaSite + '</td></tr>'
+
+                        //onclick="imgfd()" style="text-decoration:underline;"
+
+
+                        if(byts.exaSite.indexOf("恩施市第二中学")==0){
+                            document.getElementById("schoolimg").src='/img/kccx/2023s2z.png';
+                            //zhongdeng
+                        }
+                        if(byts.exaSite.indexOf("恩施职业技术学院")==0){
+                            document.getElementById("schoolimg").src='/img/kccx/2023zy.png';
+                        }
+
+                        if(byts.exaSite.indexOf("恩施市中等职业技术学校")==0){
+                            document.getElementById("schoolimg").src='/img/kccx/2023zdzz.png';
+                        }
+
+                        $("#showinfo").html(con);
+
+
+                        return false;
+
+
+                    }else{
+                        alert("请检查准考证号或姓名输入是否正确！");
+                        return false;
+                    }
+                    alert("请检查准考证号或姓名输入是否正确!");
+                    return false;
+
+                } else {
+                    alert("请检查准考证号或姓名输入是否正确!");
+                    return false;
+                }
+            },
+        });
+
+        return false;
+    }
+
+    // 重置表单
+    function form_set(){
+        document.getElementById("formid").reset();
+        return false;
+    }
+
+    function Check() {
+        if (!/^[\u4E00-\u9FA5\uf900-\ufa2d·s]{2,20}$/.test($("#stuname").val())) {
+            alert("姓名格式错误！");
+            // $("#stuname").focus();
+            return false;
+        }
+        if ($("#candidateNumber").val() == "") {
+            alert("准考证号不能为空！");
+            // $("#candidateNumber").focus();
+            return false;
+        }
+        if ($("#stuname").val() == "") {
+            alert("姓名不能为空！");
+            // $("#stuname").focus();
+            return false;
+        }
+        return true;
+    }
+
+
+    function imgfd(){
+        var currImg = $('.amplifyImg img');
+        coverLayer(1);
+        var tempContainer = $('<div class=tempContainer></div>');//图片容器
+        with(tempContainer){//width方法等同于$(this)
+            appendTo("body");
+            var windowWidth=$(window).width();
+            var windowHeight=$(window).height();
+            //获取图片原始宽度、高度
+            var orignImg = new Image();
+            orignImg.src =currImg.attr("src") ;
+            var currImgWidth= orignImg.width;
+            var currImgHeight = orignImg.height;
+            css('top',0);
+            html('<img border=0 src=' + currImg.attr('src') + '  ; height='+windowHeight+'>');
+            // if(currImgWidth<windowWidth){//为了让图片不失真，当图片宽度较小的时候，保留原图
+            //     if(currImgHeight<windowHeight){
+            //         var topHeight=(windowHeight-currImgHeight)/2;
+            //         if(topHeight>35){
+            //             /*此处为了使图片高度上居中显示在整个手机屏幕中：因为在android,ios的微信中会有一个title导航，
+            //             35为title导航的高度*/
+            //             topHeight=topHeight-35;
+            //             css('top',topHeight);
+            //         }else{
+            //             css('top',0);
+            //         }
+            //         html('<img border=0 src=' + currImg.attr('src') + '>');
+            //     }else{
+            //         css('top',0);
+            //         html('<img border=0 src=' + currImg.attr('src') + ' height='+windowHeight+'>');
+            //     }
+            // }else{
+            //     var currImgChangeHeight=(currImgHeight*windowWidth)/currImgWidth;
+            //     if(currImgChangeHeight<windowHeight){
+            //         var topHeight=(windowHeight-currImgChangeHeight)/2;
+            //         if(topHeight>35){
+            //             topHeight=topHeight-35;
+            //             css('top',topHeight);
+            //         }else{
+            //             css('top',0);
+            //         }
+            //         html('<img border=0 src=' + currImg.attr('src') + ' width='+windowWidth+';>');
+            //     }else{
+            //         css('top',0);
+            //         html('<img border=0 src=' + currImg.attr('src') + ' width='+windowWidth+'; height='+windowHeight+'>');
+            //     }
+            // }
+        }
+        tempContainer.click(function(){
+            $(this).remove();
+            coverLayer(0);
+        });
+    }
+    //使用禁用蒙层效果
+    function coverLayer(tag){
+        with($('.over')){
+            if(tag==1){
+                //css('height',$(document).height());
+                css('display','block');
+                css('opacity',1);
+                css("background-color","#FFFFFF");
+                css("background-color","rgba(0,0,0,0.7)" );  //蒙层透明度
+                document.getElementById("formid").style="display:none;";
+                document.getElementById("header").style="display:none;";
+                document.getElementById("title").style="display:none;";
+                //document.getElementById("amplifyImg").style="display:none;";
+
+            }
+            else{
+                css('display','none');
+                document.getElementById("formid").style="display:;";
+                document.getElementById("header").style="display:;";
+                document.getElementById("title").style="display:;";
+                //document.getElementById("amplifyImg").style="display:;width:10%";
+            }
+        }
+    }
+    $(document).ready(function () {
+        var imgsObj = $('.amplifyImg img');//需要放大的图像
+        if(imgsObj){
+            $.each(imgsObj,function(){
+                $(this).click(function(){
+                    var currImg = $(this);
+                    coverLayer(1);
+                    var tempContainer = $('<div class=tempContainer></div>');//图片容器
+                    with(tempContainer){//width方法等同于$(this)
+                        appendTo("body");
+                        var windowWidth=$(window).width();
+                        var windowHeight=$(window).height();
+                        //获取图片原始宽度、高度
+                        var orignImg = new Image();
+                        orignImg.src =currImg.attr("src") ;
+                        var currImgWidth= orignImg.width;
+                        var currImgHeight = orignImg.height;
+                        if(currImgWidth<windowWidth){//为了让图片不失真，当图片宽度较小的时候，保留原图
+                            if(currImgHeight<windowHeight){
+                                var topHeight=(windowHeight-currImgHeight)/2;
+                                if(topHeight>35){
+                                    /*此处为了使图片高度上居中显示在整个手机屏幕中：因为在android,ios的微信中会有一个title导航，
+                                    35为title导航的高度*/
+                                    topHeight=topHeight-35;
+                                    css('top',topHeight);
+                                }else{
+                                    css('top',0);
+                                }
+                                html('<img border=0 src=' + currImg.attr('src') + '>');
+                            }else{
+                                css('top',0);
+                                html('<img border=0 src=' + currImg.attr('src') + ' height='+windowHeight+'>');
+                            }
+                        }else{
+                            var currImgChangeHeight=(currImgHeight*windowWidth)/currImgWidth;
+                            if(currImgChangeHeight<windowHeight){
+                                var topHeight=(windowHeight-currImgChangeHeight)/2;
+                                if(topHeight>35){
+                                    topHeight=topHeight-35;
+                                    css('top',topHeight);
+                                }else{
+                                    css('top',0);
+                                }
+                                html('<img border=0 src=' + currImg.attr('src') + ' width='+windowWidth+';>');
+                            }else{
+                                css('top',0);
+                                html('<img border=0 src=' + currImg.attr('src') + ' width='+windowWidth+'; height='+windowHeight+'>');
+                            }
+                        }
+                    }
+                    tempContainer.click(function(){
+                        $(this).remove();
+                        coverLayer(0);
+                    });
+                });
+            });
+        }
+        else{
+            return false;
+        }
+
+        //使用禁用蒙层效果
+        function coverLayer(tag){
+            with($('.over')){
+                if(tag==1){
+                    //css('height',$(document).height());
+                    css('display','block');
+                    css('opacity',1);
+                    css("background-color","#FFFFFF");
+                    css("background-color","rgba(0,0,0,0.7)" );  //蒙层透明度
+                    document.getElementById("formid").style="display:none;";
+                    document.getElementById("header").style="display:none;";
+                    document.getElementById("title").style="display:none;";
+                    document.getElementById("amplifyImg").style="display:none;";
+
+                }
+                else{
+                    css('display','none');
+                    document.getElementById("formid").style="display:;";
+                    document.getElementById("header").style="display:;";
+                    document.getElementById("title").style="display:;";
+                    document.getElementById("amplifyImg").style="display:;width:10%";
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+<style>
+    .alertMessageBg{
+
+    }
+
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    .title{
+        padding: 1px;
+        text-align: center;
+        font-size: 5px;
+        font-weight: bold;
+        color: #3784e4;
+        letter-spacing: 2px;
+        margin-top:1px;
+    }
+    .info-item span{
+        width: 70px;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 16px;
+    }
+
+
+    .btn{
+        width: 1.5rem;
+        height: 0.5rem;
+        border-radius: 0.1rem;
+
+        /*width: 50px;*/
+        /*height: 30px;*/
+        margin: 2px 10px;
+        background-color: #D9E4DD;
+        color: #252525;
+        border: none;
+        /*border-radius: 6px;*/
+    }
+    .btn button:hover{
+        cursor: pointer;
+        background-color: #6f9eaf;
+        color: #222831;
+        border: none;
+    }
+    .content{
+        width: 90%;
+        margin: 5px auto;
+        padding: 10px;
+        text-align: center;
+    }
+    .tb{
+        width: 100%;
+        text-align: left;
+        border: 1px solid #8aa4af;//查询后数据边框的颜色
+    }
+    .row{
+        height: 30px;
+    }
+    .option{
+        width: 45%;
+        padding: 6px 8px;
+        background-color: #d9e4dd;
+        color: #000000;
+        font-size: 18px;
+        border-bottom: 1px solid #8aa4af;//查询后数据边框的颜色
+    }
+    .option-con{
+        padding: 6px 8px;
+        border-bottom: 1px solid #8aa4af;//查询后数据边框的颜色
+        border-left: 1px solid #8aa4af;//查询后数据边框的颜色
+    }
+    .bnone{
+        border-bottom: none;
+    }
+
+    ul{
+        list-style: none;
+    }
+    a{
+        text-decoration: none;
+    }
+
+    body{
+        margin: 0px;
+        padding: 0px;
+        font-size: 16px;
+        background-color: #F5F5F5;
+    }
+    .header{
+        height: 1rem;
+        line-height: 0.65rem;
+        background: #3784E4;
+        text-align: left;
+    }
+    .title{
+        margin-top: 0.1rem;
+        height: 0.8rem;
+        line-height: 0.8rem;
+        text-align: center;
+        font-size: 0.30rem;
+        background-color: #fff;
+        font-weight: bold;
+        color: #3784e4;
+    }
+
+    #logo{
+        margin-left: 0.3rem;
+        margin-top: 0.3rem;
+        width: 2.6rem;
+    }
+    .search{
+        background-color: white;
+        padding: 0.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        flex-direction: column;
+        margin-top: 0.03rem;
+    }
+    .info-input{
+        margin-top: 0.2rem;
+        width: 4.5rem;
+        height: 0.38rem;
+        margin-left: 0.1rem;
+        margin-right: 0.1rem;
+    }
+    .search-input{
+
+    }
+    .search-btn{
+        margin-top: 0.2rem;
+        width: 3.5rem;
+        display: flex;
+        align-items:flex-start ;
+        height: 0.45rem;
+        justify-content: space-evenly;
+        align: center;
+    }
+
+</style>
+</html>

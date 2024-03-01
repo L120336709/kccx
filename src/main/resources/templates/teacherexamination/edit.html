@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal" id="form1" th:object="${teacherexamination}" autocomplete="off">
+            <input id="id" name="id" th:field="*{id}"  type="hidden">
+            <div class="form-group">	
+                <label class="col-sm-3 control-label">姓名：</label>
+                <div class="col-sm-8">
+                    <input id="examineename" name="examineename" th:field="*{examineename}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">	
+                <label class="col-sm-3 control-label">准考证号：</label>
+                <div class="col-sm-8">
+                    <input id="examregistrationnumber" name="examregistrationnumber" th:field="*{examregistrationnumber}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">	
+                <label class="col-sm-3 control-label">考点名称：</label>
+                <div class="col-sm-8">
+                    <input id="theexaminationsitename" name="theexaminationsitename" th:field="*{theexaminationsitename}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">	
+                <label class="col-sm-3 control-label">考点地址：</label>
+                <div class="col-sm-8">
+                    <input id="theexaminationsiteaddress" name="theexaminationsiteaddress" th:field="*{theexaminationsiteaddress}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">	
+                <label class="col-sm-3 control-label">第一场考场代码：</label>
+                <div class="col-sm-8">
+                    <input id="thefirstsession" name="thefirstsession" th:field="*{thefirstsession}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">	
+                <label class="col-sm-3 control-label">第一场教室号：</label>
+                <div class="col-sm-8">
+                    <input id="classroomnumberone" name="classroomnumberone" th:field="*{classroomnumberone}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">	
+                <label class="col-sm-3 control-label">第二场考场代码：</label>
+                <div class="col-sm-8">
+                    <input id="thefirstgame" name="thefirstgame" th:field="*{thefirstgame}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">	
+                <label class="col-sm-3 control-label">第二场教室号：</label>
+                <div class="col-sm-8">
+                    <input id="classroomnumbertwo" name="classroomnumbertwo" th:field="*{classroomnumbertwo}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">	
+                <label class="col-sm-3 control-label">第三场考场代码：</label>
+                <div class="col-sm-8">
+                    <input id="thethirdsession" name="thethirdsession" th:field="*{thethirdsession}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">	
+                <label class="col-sm-3 control-label">第三场教室号：</label>
+                <div class="col-sm-8">
+                    <input id="classroomnumberthree" name="classroomnumberthree" th:field="*{classroomnumberthree}" class="form-control" type="text">
+                </div>
+            </div>
+			
+		</form>
+    </div>
+    <div th:include="include::footer"></div>
+    <script type="text/javascript">
+		var prefix = ctx + "teacherexamination";
+
+        var icon = "<i class='fa fa-times-circle'></i> ";
+		$("#form1").validate({
+            rules:{
+					examineename:{
+                    required:true,
+                },
+					examregistrationnumber:{
+                    required:true,
+                },
+					theexaminationsitename:{
+                    required:true,
+                },
+					theexaminationsiteaddress:{
+                    required:true,
+                },
+					thefirstsession:{
+                    required:true,
+                },
+					classroomnumberone:{
+                    required:true,
+                },
+					thefirstgame:{
+                    required:true,
+                },
+					classroomnumbertwo:{
+                    required:true,
+                },
+					thethirdsession:{
+                    required:true,
+                },
+					classroomnumberthree:{
+                    required:true,
+                },
+        },
+        messages: {
+					examineename: {
+                    required: icon + "请输入姓名",
+                },
+					examregistrationnumber: {
+                    required: icon + "请输入准考证号",
+                },
+					theexaminationsitename: {
+                    required: icon + "请输入考点名称",
+                },
+					theexaminationsiteaddress: {
+                    required: icon + "请输入考点地址",
+                },
+					thefirstsession: {
+                    required: icon + "请输入第一场考场代码",
+                },
+					classroomnumberone: {
+                    required: icon + "请输入第一场教室号",
+                },
+					thefirstgame: {
+                    required: icon + "请输入第二场考场代码",
+                },
+					classroomnumbertwo: {
+                    required: icon + "请输入第二场教室号",
+                },
+					thethirdsession: {
+                    required: icon + "请输入第三场考场代码",
+                },
+					classroomnumberthree: {
+                    required: icon + "请输入第三场教室号",
+                },
+        }
+		});
+		
+		
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", $('#form1').serialize());
+        }
+    }
+		
+	</script>
+</body>
+</html>

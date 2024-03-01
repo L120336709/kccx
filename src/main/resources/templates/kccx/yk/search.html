@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>研究生考试（初试）恩施考区考生考场查询</title>
+    <!--    <script th:src="@{/js/base.js}"></script>-->
+</head>
+<body>
+<div id="header">
+    <img src="/kaochangchaxun/images/logo1.png" style="margin-top: 15px;">
+</div>
+<div id="container" style="text-align: left;">
+
+    <div class="title" id="title"></div>
+
+
+    <div class="tip">温馨提示：查询后请截图保存，避免集中查询造成网络拥堵。</div>
+    <form action="" id="formid" onsubmit="return false" >
+        <div style="background-color: white;border-radius: 6px; height: 80px;line-height: 80px; text-align: left;margin-top: 2px;" >
+            <label style="margin-left: 15px;">考生姓名<input id="stuname" placeholder="请输入你的姓名"  type="text" class="info-inpput" style="margin-left: 15px;"></label>
+            <label style="margin-left: 15px;">考生编号<input id="candidateNumber" placeholder="请输入你的考生编号" type="text" class="info-inpput" style="margin-left: 15px;"></label>
+            <button type="button" class="btn1" id="btnSubmit">查询</button>
+            <button type="button" class="btn1"  onclick="form_set()">重置</button>
+        </div>
+        <div class="content"  style="background-color:white;margin-top: 2px; text-align: center;padding:3% 10%;height: 350px" >
+            <div style="width: 70%;float: left;display:inline;" align="center" id="showinfo">
+                <div align="left">
+                    <table class="tb">
+                    <tr class="row">
+                        <td class="option">姓名</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">考生编号</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">报考单位</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">考场号</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">座位号</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">楼栋</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">教室</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option">楼层</td>
+                        <td class="option-con"></td>
+                    </tr>
+                    <tr class="row">
+                        <td class="option bnone">考点</td>
+                        <td class="option-con bnone"></td>
+                    </tr>
+                    </table>
+                </div>
+            </div >
+            <div style="width: 30%;float: left;display:inline;" align="center" >
+                <img style="float: left;width: 50%;padding-left: 20%" class="" th:src="@{/img/kccx/ykcx2023.png}" alt="" />
+                <div style="float: left;width: 50%;padding-left: 20%;padding-top: 10%" class="logoImg amplifyImg"  ><!--注意：此处的amlifyImg不可少-->
+                            <img style="width: 100%" th:src="@{/}" alt="" id="schoolimg" />
+                </div>
+                <div class="over"></div><!--背景层-->
+            </div>
+        </div>
+    </form>
+
+<!--    <div align="center">-->
+<!--        <img style="float: left" class="desearchresult" th:src="@{/img/jszgsearchresult.png}" alt="" />-->
+<!--        <div style="float: right" class="logoImg amplifyImg">&lt;!&ndash;注意：此处的amlifyImg不可少&ndash;&gt;-->
+<!--            <img class="desearchresult" th:src="@{/img/zhongdeng.png}" alt="" id="schoolimg"/>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="over"></div>&lt;!&ndash;背景层&ndash;&gt;-->
+
+</div>
+</div>
+<script th:src="@{/js/jquery.min.js}"></script>
+<!--<script th:src="@{/js/resizewindow.js}"></script>-->
+<script>
+    $(document).ready(function() {
+        $("#btnSubmit").click(function() {
+            if (Check()) {
+                get_info();
+            }
+        });
+    });
+    //标题
+    $(function(){
+        $.ajax({
+            url:'/exaPostgraduateTitle/table/selectTitle',
+            data:{'id':1},
+            dataType:'json',
+            type:'post',
+            success:function(data){
+                if (data.code==200) {
+                    var titlelist= {};
+                    titlelist = data.data; //数组
+                    if( titlelist.length!=0){
+                        bon= '<div class="title">' + titlelist.title + '</div>'
+                        $("#title").html(bon);
+                        return false;
+                    }else {
+                        alert("系统有误请稍后重试....");
+                        return false;
+                    }
+                } else {
+                    alert("系统有误请稍后重试....");
+                    return false;
+                }
+            },
+        });
+    })
+    // $(function(){
+    //     if(_isMobile){
+    //        window.location.href="/crgk/searchmob";
+    //     }else{
+    //
+    //     }
+    //
+    // })
+    // 查询信息
+    function get_info(){
+        var stuname = $("#stuname").val();
+        var candidateNumber = $("#candidateNumber").val();
+        $.ajax({
+            url:'/exaPostgraduate/table/selectEndurance',
+            data:{'stuname':stuname, 'candidateNumber':candidateNumber},
+            dataType:'json',
+            type:'post',
+            success:function(data){
+                if (data.code==200) {
+                    var byts= {};
+                    byts = data.data; //数组
+                    if(byts.length!=0){
+
+                        var con = '<table class="tb">'
+                        con += '<tr class="row"><td class="option">姓名</td>'
+                        con += '<td class="option-con">' + byts.stuname + '</td></tr>'
+                        con += '<tr class="row"><td class="option">考生编号</td>'
+                        con += '<td class="option-con">' + byts.candidateNumber + '</td></tr>'
+                        con += '<tr class="row"><td class="option">报考单位</td>'
+                        con += '<td class="option-con">' + byts.applySchool + '</td></tr>'
+                        con += '<tr class="row"><td class="option">考场号</td>'
+                        con += '<td class="option-con">' + byts.exaRoomNum + '</td></tr>'
+                        con += '<tr class="row"><td class="option">座位号</td>'
+                        con += '<td class="option-con">' + byts.seatNumber + '</td></tr>'
+                        con += '<tr class="row"><td class="option">楼栋</td>'
+                        con += '<td class="option-con">' + byts.building + '</td></tr>'
+                        con += '<tr class="row"><td class="option">教室</td>'
+                        con += '<td class="option-con">' + byts.classroom + '</td></tr>'
+                        con += '<tr class="row"><td class="option">楼层</td>'
+                        con += '<td class="option-con">' + byts.floor + '</td></tr>'
+                        con += '<tr class="row"><td class="option bnone">考点</td>'
+                        con += '<td class="option-con bnone">' + byts.exaSite + '</td></tr>'
+
+                        $("#showinfo").html(con);
+
+                        // if(byts.exaSite.indexOf("恩施市第一中学")==0){
+                        //     document.getElementById("schoolimg").src='/img/shiyizhong.png';
+                        //     //zhongdeng
+                        // }
+                        // if(byts.exaSite.indexOf("恩施职业技术学院")==0){
+                        //     document.getElementById("schoolimg").src='/img/zhiyuan.png';
+                        // }
+
+
+                        return false;
+
+
+                    }else{
+                        alert("请检查准考证号或姓名输入是否正确！");
+                        return false;
+                    }
+                    alert("请检查准考证号或姓名输入是否正确!");
+                    return false;
+
+                } else {
+                    alert("请检查准考证号或姓名输入是否正确!");
+                    return false;
+                }
+            },
+        });
+
+        return false;
+    }
+    // 重置表单
+    function form_set(){
+        document.getElementById("formid").reset();
+        return false;
+    }
+
+    function Check() {
+        if (!/^[\u4E00-\u9FA5\uf900-\ufa2d·s]{2,20}$/.test($("#stuname").val())) {
+            alert("姓名格式错误！");
+            // $("#stuname").focus();
+            return false;
+        }
+        if ($("#candidateNumber").val() == "") {
+            alert("准考证号不能为空！");
+            // $("#candidateNumber").focus();
+            return false;
+        }
+        if ($("#stuname").val() == "") {
+            alert("姓名不能为空！");
+            // $("#stuname").focus();
+            return false;
+        }
+        return true;
+    }
+
+
+
+    $(document).ready(function () {
+        var imgsObj = $('.amplifyImg img');//需要放大的图像
+        if(imgsObj){
+            $.each(imgsObj,function(){
+                $(this).click(function(){
+                    var currImg = $(this);
+                    coverLayer(1);
+                    var tempContainer = $('<div class=tempContainer></div>');//图片容器
+                    with(tempContainer){//width方法等同于$(this)
+                        appendTo("body");
+                        var windowWidth=$(window).width();
+                        var windowHeight=$(window).height();
+                        //获取图片原始宽度、高度
+                        var orignImg = new Image();
+                        orignImg.src =currImg.attr("src") ;
+                        var currImgWidth= orignImg.width;
+                        var currImgHeight = orignImg.height;
+
+                        css('top',0);
+                        html('<img border=0 src=' + currImg.attr('src') + '   height='+windowHeight+'>');
+
+                        // if(currImgWidth<windowWidth){//为了让图片不失真，当图片宽度较小的时候，保留原图
+                        //     if(currImgHeight<windowHeight){
+                        //         var topHeight=(windowHeight-currImgHeight)/2;
+                        //         if(topHeight>35){
+                        //             topHeight=topHeight-35;
+                        //             css('top',topHeight);
+                        //         }else{
+                        //             css('top',0);
+                        //         }
+                        //         html('<img border=0 src=' + currImg.attr('src') + '>');
+                        //     }else{
+                        //         css('top',0);
+                        //         html('<img border=0 src=' + currImg.attr('src') + ' height='+windowHeight+'>');
+                        //     }
+                        // }else{
+                        //     var currImgChangeHeight=(currImgHeight*windowWidth)/currImgWidth;
+                        //     if(currImgChangeHeight<windowHeight){
+                        //         var topHeight=(windowHeight-currImgChangeHeight)/2;
+                        //         if(topHeight>35){
+                        //             topHeight=topHeight-35;
+                        //             css('top',topHeight);
+                        //         }else{
+                        //             css('top',0);
+                        //         }
+                        //         html('<img border=0 src=' + currImg.attr('src') + ' width='+currImgWidth+';>');
+                        //     }else{
+                        //         css('top',0);
+                        //         html('<img border=0 src=' + currImg.attr('src') + ' width='+windowWidth+'; height='+windowWidth+'>');
+                        //     }
+                        // }
+
+
+                    }
+                    tempContainer.click(function(){
+                        $(this).remove();
+                        coverLayer(0);
+                    });
+                });
+            });
+        }
+        else{
+            return false;
+        }
+        //使用禁用蒙层效果
+        function coverLayer(tag){
+            with($('.over')){
+                if(tag==1){
+                    css('height',$(document).height());
+                    css('display','block');
+                    css('opacity',1);
+                    css("background-color","#FFFFFF");
+                    css("background-color","rgba(1,1,1,1)" );  //蒙层透明度
+                }
+                else{
+                    css('display','none');
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+<style>
+    .over {position: fixed; left:0; top:0; width:100%; z-index:100;}
+    .tempContainer {position:fixed; width:100%; margin-right:0px; margin-left:0px; text-align:center; z-index:101;}
+
+    body, html {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        background-color: #F5F5F5;
+        font-size: 14px;
+    }
+
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    #container{
+        margin: 0% 16%;
+
+    }
+    #header{
+        height: 65px;
+        background-color: #3784E4;
+        width: 100%;
+    }
+    .title{
+        margin-top: 5px;
+        background-color: white;
+        font-size: 25px;
+        font-weight: bold;
+        color: #3784e4;
+        letter-spacing: 3px;
+        height: 55px;
+        line-height: 55px;
+        text-align: center;
+        border-radius: 6px;
+    }
+    .tip{
+        width: 96.7%;
+        height: 20px;
+        margin-top: 5px;
+        padding: 15px;
+        background-color: #8ab6d6;
+        /*border-left: 8px solid #fa1e0e;*/
+        font-size: 16px;
+        letter-spacing: 2px;
+        color: #433520;
+        box-shadow: 3px 3px 3px #aaaaaa;
+        border-radius: 6px;
+    }
+
+    .desearchresult{
+        width: 40%;
+        height: 40%;
+    }
+
+
+    .info-item span{
+        width: 70px;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 16px;
+    }
+
+    .info-inpput{
+        margin-left: 5px;
+        box-sizing: border-box;
+        width: 28%;
+        height: 28px;
+        background-color: #f4f4f2;
+        border: none;
+        border-radius: 3px;
+        border: 1px solid #eee;
+    }
+
+    .btn1{
+
+        width: 55px;
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+        color: #FFF;
+        font-size: 14px;
+        font-family: "Microsoft YaHei", sans-serif;
+        margin-left: 15px;
+        background-color: #98ded9;
+        border-radius: 3px;
+        border: none;
+    }
+    .btn1:hover{
+        cursor: pointer;
+        background-color: #68C8C1;
+        color: #222831;
+        border: none;
+    }
+    .btn button{
+        width: 50px;
+        height: 30px;
+        margin: 0 20px;
+        background-color: #98ded9;
+        color: #252525;
+        border: none;
+        border-radius: 6px;
+    }
+    .btn button:hover{
+        cursor: pointer;
+        background-color: #6f9eaf;
+        color: #222831;
+        border: none;
+    }
+    .content{
+        width: 80%;
+        padding: 10%;
+        margin-top: 3px;
+        text-align: center;
+    }
+    .tb{
+        width: 100%;
+
+    }
+    .row{
+        height: 18px;
+        padding: 5px;
+    }
+    .option{
+        width:30%;
+        padding-left: 25px;
+        height: 30px;
+        color: #000000;
+        font-size: 16px;
+        background-color: #f1f1f1;
+    }
+    .option-con{
+        border:1px solid  #f1f1f1;
+    }
+    .desearchresult{
+        width: 20%;
+        height: 20%;
+    }
+</style>
+</html>
